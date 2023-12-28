@@ -4,9 +4,11 @@ export default {
 }
 </script>
 <template>
-    <h1 class="m-auto">
-        welcome
-    </h1>
+    <section class="container">
+        <h1>
+            Welcome
+        </h1>
+    </section>
 </template>
 
 

@@ -2,5 +2,10 @@ import { createApp } from 'vue'
 import './assets/scss/style.scss'
 import App from './App.vue'
 import { router } from './router.js'
+import store from './state.js'
 
-createApp(App).use(router).mount('#app')
+const app = createApp(App);
+
+app.use(router)
+app.use(store)
+    .mount('#app')

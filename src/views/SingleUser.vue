@@ -29,15 +29,17 @@ export default {
 };
 </script>
 <template>
-    <div>
-        <h2>User Details</h2>
+    <section class="container text-center">
+        <h2 class="pb-4">
+            User Details
+        </h2>
         <div>
             <p><strong>ID:</strong> {{ user.id }}</p>
             <p><strong>Name:</strong> {{ user.name }}</p>
             <p><strong>Type:</strong> {{ user.type }}</p>
             <!-- Add other user details as needed -->
         </div>
-    </div>
+    </section>
 </template>
 
 

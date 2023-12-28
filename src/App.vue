@@ -1,16 +1,13 @@
 <script>
-import axios from 'axios';
+import AppHeader from './components/AppHeader.vue';
 
 export default {
   name: 'App',
   components: {
-
+    AppHeader,
   },
   data() {
     return {
-      user: {},
-      users: [],
-      success: '',
     }
   },
   methods: {
@@ -24,24 +21,11 @@ export default {
 </script>
 
 <template>
-  <header>
-    <nav class="navbar navbar-expand navbar-dark bg-dark">
-      <ul class="nav navbar-nav">
-        <li class="nav-item">
-          <router-link to="/users">
-            users
-          </router-link>
-        </li>
-        <li class="nav-item">
-          <a class="nav-link" href="#">Nav 2</a>
-        </li>
-      </ul>
-    </nav>
-  </header>
+  <AppHeader />
 
-  <main class=" min-vh-100">
+  <main class=" min-vh-100 py-5">
 
-    <router-view class="container">
+    <router-view>
 
     </router-view>
 
