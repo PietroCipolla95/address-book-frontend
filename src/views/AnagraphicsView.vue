@@ -1,6 +1,6 @@
 <script>
 import axios from 'axios';
-import { mapState } from 'vuex'
+import { mapState } from 'vuex';
 
 export default {
     name: 'Anagraphics',
@@ -10,6 +10,7 @@ export default {
             anagraphics: [],
             success: '',
             errors: {},
+            searchKeyword: '',
         }
     },
     methods: {
@@ -46,6 +47,22 @@ export default {
                     }
                 });
         },
+
+        searchAnagraphics() {
+            axios
+                .get(`http://127.0.0.1:8000/api/anagraphics/search?keyword=${this.searchKeyword}`)
+                .then(response => {
+                    if (response.data.success) {
+                        this.anagraphics = response.data.result;
+                    } else {
+                        console.error('Error searching anagraphics:', response.data.message);
+                    }
+                })
+                .catch(error => {
+                    console.error('Error searching anagraphics:', error);
+                });
+        },
+
         deleteAnagraphic(id) {
             axios
                 .delete(`http://127.0.0.1:8000/api/anagraphic/${id}`)
@@ -75,6 +92,7 @@ export default {
 
 <template>
     <section id="anagraphics" class="container">
+
 
         <div class="row">
 
@@ -123,6 +141,12 @@ export default {
 
                 <h3 class="text-center pb-4">Anagraphics List</h3>
 
+                <div class="mb-5">
+                    <label for="searchKeyword" class="form-label">Search Anagraphics</label>
+                    <input v-model="searchKeyword" type="text" id="searchKeyword" class="form-control"
+                        @input="searchAnagraphics">
+                </div>
+
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">
 
                     <!-- dinamic anagraphic generation -->
@@ -136,7 +160,7 @@ export default {
                                 </router-link>
                             </h2>
 
-                            <div id="actions">
+                            <div id="actions" v-if="isAdmin">
                                 <router-link :to="{ name: 'anagraphic-edit', params: { id: anagraphic.id } }"
                                     class="btn btn-secondary">
                                     Edit

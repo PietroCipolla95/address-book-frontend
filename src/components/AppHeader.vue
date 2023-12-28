@@ -51,9 +51,14 @@ export default {
                                 Anagraphics
                             </router-link>
                         </li>
-                        <li class="nav-item" v-if="isAdmin">
+                        <li class="nav-item pe-3" v-if="isAdmin">
                             <router-link to="/users">
                                 Users
+                            </router-link>
+                        </li>
+                        <li class="nav-item">
+                            <router-link to="/contact">
+                                Contacts
                             </router-link>
                         </li>
                     </ul>

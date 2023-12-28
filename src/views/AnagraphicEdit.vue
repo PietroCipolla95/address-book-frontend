@@ -7,6 +7,8 @@ export default {
         return {
             anagraphic: {},
             errors: {},
+            success: '',
+            route_id: '',
         };
     },
     mounted() {
@@ -16,8 +18,9 @@ export default {
         updateAnagraphic() {
             axios
                 .patch(`http://localhost:8000/api/anagraphic/${this.$route.params.id}`, this.anagraphic)
-                .then((res) => {
-                    this.$router.push({ name: 'anagraphics-view' });
+                .then((response) => {
+                    this.success = response.data.success
+                    console.log(response);
                 })
                 .catch((error) => {
                     this.errors = error.response.data.errors;
@@ -26,6 +29,9 @@ export default {
         fetchAnagraphicDetails() {
             axios.get(`http://localhost:8000/api/anagraphic/${this.$route.params.id}`)
                 .then(response => {
+
+                    this.route_id = response.data.result.id
+
                     this.anagraphic = {
                         name: response.data.result.name,
                         notes: response.data.result.notes,
@@ -63,6 +69,15 @@ export default {
                         <label>Note (optional)</label>
                         <textarea class="form-control" v-model="anagraphic.notes" rows="3"></textarea>
                     </div>
+
+                    <p v-if="success" class="p-3 fw-bolder bg-success text-dark border border-dark rounded-3">
+                        Contact updated!
+
+                        <router-link :to="{ name: 'anagraphic-show', params: { id: route_id } }">
+                            go back
+                        </router-link>
+
+                    </p>
 
                     <button type="submit" class="btn btn-dark btn-outline-info mt-4">Update</button>
                 </form>

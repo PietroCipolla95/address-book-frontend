@@ -8,6 +8,8 @@ import Login from './Login.vue';
 import AnagraphicsView from './views/AnagraphicsView.vue';
 import SingleAnagraphic from './views/SingleAnagraphic.vue';
 import AnagraphicEdit from './views/AnagraphicEdit.vue';
+import ContactEdit from './views/ContactEdit.vue';
+import ContactSearch from './views/ContactSearch.vue';
 
 
 const router = createRouter({
@@ -60,6 +62,18 @@ const router = createRouter({
             path: '/anagraphic/:id',
             name: 'anagraphic-edit',
             component: AnagraphicEdit,
+            meta: { requiresAuth: true },
+        },
+        {
+            path: '/contact/:id',
+            name: 'contact-edit',
+            component: ContactEdit,
+            meta: { requiresAuth: true },
+        },
+        {
+            path: '/contact',
+            name: 'contact-search',
+            component: ContactSearch,
             meta: { requiresAuth: true },
         },
     ]
