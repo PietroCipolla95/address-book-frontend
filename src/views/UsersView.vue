@@ -1,5 +1,6 @@
 <script>
 import axios from 'axios';
+import { mapState } from 'vuex';
 
 export default {
     name: 'App',
@@ -12,6 +13,7 @@ export default {
             users: [],
             success: '',
             errors: {},
+            deletedUser: {},
         }
     },
     methods: {
@@ -49,21 +51,45 @@ export default {
         },
 
         deleteUser(id) {
+
+            // Fetch user data by id before deleting
             axios
-                .delete(`http://127.0.0.1:8000/api/user/${id}`)
+                .get(`http://127.0.0.1:8000/api/user/${id}`)
                 .then(response => {
+                    //console.log(response);
+                    this.deletedUser = {
+                        id: response.data.user.id,
+                        name: response.data.user.name,
+                        type: response.data.user.type
+                    }; // Store the deleted user data
+
+                    console.log(this.deletedUser);
+                    // Proceed with deletion
+                    return axios.delete(`http://127.0.0.1:8000/api/user/${id}`);
+                })
+                .then(() => {
                     // Update the local users array after successful deletion
                     this.users = this.users.filter(user => user.id !== id);
+
+                    // Reset deletedUser after displaying the alert
+                    //this.deletedUser = null;
                 })
                 .catch(error => {
                     console.error('Error deleting user:', error);
                 });
-        }
+        },
 
     },
     mounted() {
         this.fetchUsers();
     },
+
+    computed: {
+        ...mapState(['loggedUser']),
+        isAdmin() {
+            return this.loggedUser.type === 'admin'
+        },
+    }
 }
 
 </script>
@@ -117,9 +143,26 @@ export default {
                 </form>
             </div>
 
+            <!-- column with user list -->
             <div class="col-12 col-lg-7">
 
+
                 <h3 class="text-center pb-4">Users List</h3>
+
+                <!-- alert with deleted user infos -->
+                <div v-if="deletedUser && Object.keys(deletedUser).length > 0"
+                    class="alert alert-danger alert-dismissible fade show" role="alert">
+                    You deleted user:
+                    <span class="text-dark fw-bolder">
+                        {{ deletedUser.name }} , {{ deletedUser.type }}
+                    </span>
+                    with id:
+                    <span class="text-dark fw-bolder">
+                        {{ deletedUser.id }}
+                    </span>
+                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                </div>
+
                 <table class="table table-sm table-borderless table-hover">
                     <thead>
                         <tr>
@@ -142,7 +185,8 @@ export default {
                                     View
                                 </router-link>
 
-                                <button class="btn btn-danger" @click="deleteUser(user.id)">Delete</button>
+                                <button v-if="user.id !== loggedUser.id" class="btn btn-danger"
+                                    @click="deleteUser(user.id)">Delete</button>
 
                             </td>
                         </tr>

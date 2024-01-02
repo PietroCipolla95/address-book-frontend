@@ -11,6 +11,8 @@ export default {
             success: '',
             errors: {},
             searchKeyword: '',
+            formData: {},
+            debounceTimer: null,
         }
     },
     methods: {
@@ -30,10 +32,26 @@ export default {
                 });
         },
 
+        handlePhotoChange(event) {
+            this.anagraphic.photo = event.target.files[0];
+            console.log(this.anagraphic.photo);
+        },
         addAnagraphic() {
 
+
+            let formData = new FormData();
+            formData.append('name', this.anagraphic.name);
+            formData.append('notes', this.anagraphic.notes);
+            formData.append('photo', this.anagraphic.photo);
+
+            console.log(this.anagraphic.photo);
+            console.log(formData);
             axios
-                .post('http://127.0.0.1:8000/api/anagraphic', this.anagraphic)
+                .post('http://127.0.0.1:8000/api/anagraphic', formData, {
+                    headers: {
+                        'Content-Type': 'multipart/form-data',
+                    },
+                })
                 .then(response => {
                     this.success = response.data;
                     console.log(this.success);
@@ -48,12 +66,25 @@ export default {
                 });
         },
 
+        // Debounced version of searchAnagraphics
+        debouncedSearchAnagraphics() {
+            if (this.debounceTimer) {
+                clearTimeout(this.debounceTimer);
+            }
+
+            this.debounceTimer = setTimeout(() => {
+                this.searchAnagraphics();
+                this.debounceTimer = null;
+            }, 500);
+        },
+
         searchAnagraphics() {
             axios
                 .get(`http://127.0.0.1:8000/api/anagraphics/search?keyword=${this.searchKeyword}`)
                 .then(response => {
                     if (response.data.success) {
                         this.anagraphics = response.data.result;
+                        console.log(this.anagraphics);
                     } else {
                         console.error('Error searching anagraphics:', response.data.message);
                     }
@@ -119,7 +150,7 @@ export default {
                     <!-- photo (optional) -->
                     <div class="form-group py-3">
                         <label>Photo (optional)</label>
-                        <input type="file" name="photo" id="photo" class="form-control">
+                        <input type="file" ref="photoInput" class="form-control" @change="handlePhotoChange">
                     </div>
 
                     <!-- note (optional) -->
@@ -144,7 +175,7 @@ export default {
                 <div class="mb-5">
                     <label for="searchKeyword" class="form-label">Search Anagraphics</label>
                     <input v-model="searchKeyword" type="text" id="searchKeyword" class="form-control"
-                        @input="searchAnagraphics">
+                        @input="debouncedSearchAnagraphics">
                 </div>
 
                 <div class="row row-cols-1 row-cols-md-2 row-cols-lg-3 g-3">

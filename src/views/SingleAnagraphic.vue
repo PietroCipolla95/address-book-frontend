@@ -10,6 +10,7 @@ export default {
             contacts: [],
             contact: {},
             newContact: {},
+            errors: {}
         };
     },
     mounted() {
@@ -55,12 +56,17 @@ export default {
                 .then(response => {
 
                     console.log('Add Contact Response:', response.data);
+                    this.success = response.data
                     this.newContact = {}
+                    this.errors = {}
                     this.fetchContacts();
                 })
                 .catch(error => {
-
                     console.error('Add Contact Error:', error.response.data);
+                    if (error.response.status === 422) {
+                        // Set the errors property with the validation error messages
+                        this.errors = error.response.data.errors;
+                    }
                 });
         },
 
@@ -117,6 +123,11 @@ export default {
                 <!-- contact creation wrapper -->
                 <div v-if="isAdmin">
                     <h3 class="pt-5 pb-3">Contact Create</h3>
+
+                    <!-- errors -->
+                    <div v-if="errors.contact" class="text-dark bg-danger py-3 my-2 w-50 mx-auto rounded-3">{{
+                        errors.contact[0]
+                    }}</div>
 
                     <!-- Form for adding a new contact -->
                     <form @submit.prevent="addContact" class="w-75 m-auto text-start">

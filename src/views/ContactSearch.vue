@@ -8,18 +8,36 @@ export default {
         return {
             searchType: '',
             contacts: [],
+            debounceTimer: null,
         };
     },
     computed: {
         filteredContacts() {
+            if (this.searchType.trim() === '') {
+
+                // Return an empty array when searchType is empty
+                return [];
+            }
             return this.contacts.filter(contact => contact.type.toLowerCase().startsWith(this.searchType.toLowerCase()));
         },
         ...mapState(['loggedUser']),
         isAdmin() {
-            return this.loggedUser.type === 'admin'
+            return this.loggedUser.type === 'admin';
         },
     },
     methods: {
+
+        // debounced search contacts
+        debouncedSearchContacts() {
+            if (this.debounceTimer) {
+                clearTimeout(this.debounceTimer);
+            }
+            this.debounceTimer = setTimeout(() => {
+                this.searchContacts();
+                this.debounceTimer = null;
+            }, 500);
+        },
+
         searchContacts() {
             axios.get(`http://127.0.0.1:8000/api/contacts/search/${this.searchType}`)
                 .then(response => {
@@ -37,7 +55,7 @@ export default {
     <section class="container">
 
         <input class="form-control w-25" v-model="searchType" placeholder="Search by contact type"
-            @input="searchContacts" />
+            @input="debouncedSearchContacts" />
 
 
         <div class="row mt-4 row-cols-1 row-cols-md-2 row-cols-lg-3">

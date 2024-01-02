@@ -9,9 +9,11 @@ const store = createStore({
     mutations: {
         setLoggedUser(state, user) {
             state.loggedUser = user;
+            localStorage.setItem('loggedUser', JSON.stringify(user));
         },
         clearLoggedUser(state) {
             state.loggedUser = {};
+            localStorage.removeItem('loggedUser');
         },
     }
 })

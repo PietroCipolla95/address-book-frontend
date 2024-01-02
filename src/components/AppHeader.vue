@@ -5,7 +5,7 @@ export default {
     name: 'AppHeader',
     methods: {
         logout() {
-            // Clear token
+            // Clear token (if needed)
             localStorage.removeItem('token');
 
             // Clear logged user using mutation
